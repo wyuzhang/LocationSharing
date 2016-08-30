@@ -49,5 +49,6 @@ typedef enum{
 - (void)moreViewAudioCallAction:(EaseChatBarMoreView *)moreView;
 - (void)moreViewVideoCallAction:(EaseChatBarMoreView *)moreView;
 - (void)moreView:(EaseChatBarMoreView *)moreView didItemInMoreViewAtIndex:(NSInteger)index;
+- (void)moreViewShareLocationAction:(EaseChatBarMoreView *)moreView;
 
 @end

@@ -44,7 +44,8 @@
 @property (nonatomic, strong) UIButton *videoButton;
 @property (nonatomic, strong) UIButton *audioCallButton;
 @property (nonatomic, strong) UIButton *videoCallButton;
-
+//位置共享
+@property (nonatomic, strong) UIButton *shareLocationButton;
 @end
 
 @implementation EaseChatBarMoreView
@@ -129,15 +130,48 @@
         _videoCallButton.tag =MOREVIEW_BUTTON_TAG + 4;
         _maxIndex = 4;
         [_scrollview addSubview:_videoCallButton];
+        
+        [_scrollview addSubview:self.shareLocationButton];
     }
     else if (type == EMChatToolbarTypeGroup)
     {
+        [_scrollview addSubview:self.shareLocationButton];
         frame.size.height = 80;
     }
     self.frame = frame;
     _scrollview.frame = CGRectMake(0, 0, CGRectGetWidth(frame), CGRectGetHeight(frame));
     _pageControl.frame = CGRectMake(0, CGRectGetHeight(frame) - 20, CGRectGetWidth(frame), 20);
     _pageControl.hidden = _pageControl.numberOfPages<=1;
+}
+
+- (UIButton *)shareLocationButton {
+    if (!_shareLocationButton) {
+        _shareLocationButton =[UIButton buttonWithType:UIButtonTypeCustom];
+        NSInteger currentIndex = _maxIndex + 1;
+        NSInteger currentRowIndex = currentIndex / MOREVIEW_COL;
+        NSInteger currentColIndex = currentIndex % MOREVIEW_COL;
+        CGFloat insets = (self.frame.size.width - 4 * CHAT_BUTTON_SIZE) / 5;
+        CGFloat x = insets * (currentColIndex + 1) + CHAT_BUTTON_SIZE * currentColIndex;
+        CGFloat y = 10;
+        if (currentRowIndex == 1) {
+            y = 10 * 2 + CHAT_BUTTON_SIZE + 10;
+        }
+        [_shareLocationButton setFrame:CGRectMake(x, y, CHAT_BUTTON_SIZE , CHAT_BUTTON_SIZE)];
+        _shareLocationButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        UIImage *image = [UIImage imageNamed:@"shareLocation"];
+        [_shareLocationButton setImage:image forState:UIControlStateNormal];
+        
+        //        _shareLocationButton.backgroundColor = [UIColor orangeColor];
+        //        [_shareLocationButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        //        [_shareLocationButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+        //        [_shareLocationButton setTitle:@"位置共享" forState:UIControlStateNormal];
+        //        [_shareLocationButton setTitle:@"位置共享" forState:UIControlStateHighlighted];
+        //        _shareLocationButton.layer.cornerRadius = 10;
+        [_shareLocationButton addTarget:self action:@selector(shareLocationAction) forControlEvents:UIControlEventTouchUpInside];
+        _shareLocationButton.tag =MOREVIEW_BUTTON_TAG + currentIndex;
+        _maxIndex = currentIndex;
+    }
+    return _shareLocationButton;
 }
 
 - (void)insertItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highLightedImage title:(NSString *)title
@@ -330,6 +364,28 @@
     if (button && _delegate && [_delegate respondsToSelector:@selector(moreView:didItemInMoreViewAtIndex:)]) {
         [_delegate moreView:self didItemInMoreViewAtIndex:button.tag-MOREVIEW_BUTTON_TAG];
     }
+}
+
+- (void)shareLocationAction{
+    if (_delegate && [_delegate respondsToSelector:@selector(moreViewShareLocationAction:)]) {
+        [_delegate moreViewShareLocationAction:self];
+    }
+    
+    /*
+     if (_shareLocationButton.isSelected) {
+     [_shareLocationButton setTitle:@"位置共享" forState:UIControlStateNormal];
+     [_shareLocationButton setTitle:@"位置共享" forState:UIControlStateHighlighted];
+     }
+     else {
+     [_shareLocationButton setTitle:@"关闭共享" forState:UIControlStateNormal];
+     [_shareLocationButton setTitle:@"关闭共享" forState:UIControlStateHighlighted];
+     }
+     
+     _shareLocationButton.selected = !_shareLocationButton.isSelected;
+     if (_delegate && [_delegate respondsToSelector:@selector(moreView:openShareLocation:)]) {
+     [_delegate moreView:self openShareLocation:_shareLocationButton.isSelected];
+     }
+     */
 }
 
 @end

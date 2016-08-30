@@ -27,7 +27,9 @@
 
 #import "CallViewController.h"
 
-@interface ChatDemoHelper()<EMCallManagerDelegate>
+#import "EMShareLocationHelper.h"
+
+@interface ChatDemoHelper()<EMCallManagerDelegate, EMShareLocationDelegate>
 {
     NSTimer *_callTimer;
 }
@@ -60,6 +62,8 @@ static ChatDemoHelper *helper = nil;
 #if DEMO_CALL == 1
     [[EMClient sharedClient].callManager removeDelegate:self];
 #endif
+    
+    [EMShareLocationHelper defaultHelper].shareDelegate = nil;
 }
 
 - (id)init
@@ -88,6 +92,8 @@ static ChatDemoHelper *helper = nil;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(makeCall:) name:KNOTIFICATION_CALL object:nil];
 #endif
+    
+    [EMShareLocationHelper defaultHelper].shareDelegate = self;
 }
 
 - (void)asyncPushOptions
@@ -781,6 +787,28 @@ static ChatDemoHelper *helper = nil;
             }
         }
     }
+}
+
+#pragma mark - EMShareLocationDelegate
+
+- (void)emHelper:(EMShareLocationHelper *)emHelper handleSharedLocation:(CLLocationCoordinate2D)locationCoordinate2D {
+    NSLog(@"跳转页面");
+    //    if (!_locationVc) {
+    //        _locationVc = [[LocationViewController alloc] initWithLocation:locationCoordinate2D];
+    //    }
+    //    else {
+    //        [_locationVc removeToLocation:locationCoordinate2D];
+    //        return;
+    //    }
+    //    if (self.chatVC) {
+    //        [self.chatVC.navigationController pushViewController:_locationVc animated:YES];
+    //    }
+    //    else if (self.callController) {
+    //
+    //    }
+    //    else {
+    //        [self.mainVC.navigationController pushViewController:_locationVc animated:YES];
+    //    }
 }
 
 @end

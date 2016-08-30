@@ -1426,6 +1426,15 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:KNOTIFICATION_CALL object:@{@"chatter":self.conversation.conversationId, @"type":[NSNumber numberWithInt:1]}];
 }
 
+- (void)moreViewShareLocationAction:(EaseChatBarMoreView *)moreView {
+    if ([EMShareLocationHelper shareLocationIsValid]) {
+        [EMShareLocationHelper resumeLocationsharingView];
+    }
+    else {
+        [EMShareLocationHelper openShareLocation:self.conversation];
+    }
+}
+
 #pragma mark - EMLocationViewDelegate
 
 -(void)sendLocationLatitude:(double)latitude

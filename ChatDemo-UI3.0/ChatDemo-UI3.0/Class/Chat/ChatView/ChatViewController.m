@@ -21,6 +21,8 @@
 #import "EMChooseViewController.h"
 #import "ContactSelectionViewController.h"
 
+#define OPEN_LOCATIONSHARING_TAG   1000
+
 @interface ChatViewController ()<UIAlertViewDelegate,EMClientDelegate, EMChooseViewDelegate>
 {
     UIMenuItem *_copyMenuItem;
@@ -133,6 +135,10 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (alertView.tag == OPEN_LOCATIONSHARING_TAG && buttonIndex == 1) {
+        [EMShareLocationHelper openShareLocation:self.conversation];
+        return;
+    }
     if (alertView.cancelButtonIndex != buttonIndex) {
         self.messageTimeIntervalTag = -1;
         [self.conversation deleteAllMessages:nil];
@@ -538,6 +544,17 @@
 {
     if (_selectedCallback) {
         _selectedCallback(nil);
+    }
+}
+
+- (void)moreViewShareLocationAction:(EaseChatBarMoreView *)moreView {
+    if ([EMShareLocationHelper shareLocationIsValid]) {
+        [EMShareLocationHelper resumeLocationsharingView];
+    }
+    else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"是否开启位置共享" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"开启", nil];
+        alertView.tag = OPEN_LOCATIONSHARING_TAG;
+        [alertView show];
     }
 }
 
